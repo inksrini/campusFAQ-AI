@@ -1,102 +1,30 @@
-# Campus AI – College FAQ Assistant
+# CAMPUS AI — Intelligent College FAQ Assistant
 
-Campus AI is a college project that helps students get answers to common college-related questions such as admissions, fees, exams, library, hostel, transport, placements and scholarships.
+An AI-powered FAQ assistant for colleges. Students ask questions in natural language
+("Can I use the library at 5 in the evening?"); the system finds the relevant trusted
+FAQs using **semantic search (MongoDB Atlas Vector Search + Gemini embeddings)** and
+generates a concise, grounded answer with **Google Gemini**.
 
-The application uses MongoDB Atlas Vector Search to find relevant FAQs based on meaning, and Google Gemini to generate the final answer from the retrieved information.
+## Meet NILA 
 
-## Features
+**NILA** is the AI assistant behind CAMPUS AI.
 
-- Ask college-related questions in natural language
-- Semantic search using MongoDB Atlas Vector Search
-- AI-generated answers based on stored FAQs
-- FAQ browsing by category
-- User registration and login
-- Role-based access for users, creators and admins
-- Admin dashboard for managing FAQs and categories
-- AI-assisted FAQ drafting for admins
-- Unanswered question tracking
+She helps students find answers about college life, academics, facilities, policies, and more — using information from the college's verified knowledge base.
 
-## Tech Stack
+> "Ask me anything about college. I'll try to save you from asking five people and getting six different answers."
 
-### Frontend
-- HTML
-- CSS
-- Vanilla JavaScript
+### Why NILA?
 
-### Backend
-- Node.js 24
-- Express 5
-- Mongoose
+NILA means **"moon" (நிலா)** in Tamil.
 
-### Database
-- MongoDB Atlas
-- MongoDB Atlas Vector Search
+But there's another reason behind the name. Some names are chosen. Some names have a story.
+This one does....🌙
 
-### AI
-- Google Gemini API
-- `@google/genai`
-- Gemini embeddings
+> **The knowledge base is the source of truth.** Gemini never invents college facts —
+> it only writes answers from the FAQs retrieved from MongoDB. If nothing relevant is
+> found, the assistant says so and logs the question for admin review.
 
-### Authentication
-- JWT
-- bcryptjs
 
-### Testing
-- Postman
-
-## How it works
-
-When a student asks a question:
-
-1. The question is converted into an embedding.
-2. MongoDB Atlas Vector Search finds similar FAQs.
-3. Relevant FAQs are passed to Gemini.
-4. Gemini generates an answer using the retrieved FAQ information.
-5. If no useful information is found, the application returns a fallback response instead of making up an answer.
-
-## Project Structure
-
-```text
-campus-ai/
-├── client/
-│   ├── index.html
-│   ├── browse.html
-│   ├── login.html
-│   ├── register.html
-│   ├── admin.html
-│   ├── css/
-│   │   └── styles.css
-│   └── js/
-│       ├── api.js
-│       ├── auth.js
-│       ├── chat.js
-│       ├── faq.js
-│       ├── admin.js
-│       └── login.js
-│
-├── server/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── services/
-│   ├── utils/
-│   ├── validators/
-│   ├── scripts/
-│   ├── app.js
-│   └── server.js
-│
-├── postman/
-│   └── CampusAI.postman_collection.json
-│
-├── .env.example
-├── .gitignore
-├── package.json
-├── package-lock.json
-└── README.md
-
----
 
 ## Table of contents
 1. [Problem statement & objectives](#1-problem-statement--objectives)
@@ -118,8 +46,6 @@ campus-ai/
 17. [AI answer generation explained](#17-ai-answer-generation-explained)
 18. [AI FAQ generation (admin)](#18-ai-faq-generation-admin)
 19. [Testing with Postman](#19-testing-with-postman)
-20. [Screenshots](#20-screenshots)
-21. [Future enhancements](#21-future-enhancements)
 
 ---
 
@@ -555,16 +481,3 @@ Recommended test sequence (negative cases included):
 | 19 | DELETE an empty category | 200 |
 | 20 | GET `/api/faqs/not-a-valid-id` | 400 (CastError mapping) |
 
-## 20. Screenshots
-
-_Add after your demo run:_ home chat page, browse page, admin dashboard (each tab),
-Postman results table.
-
-## 21. Future enhancements
-
-- Chat history per user (optional model + endpoints)
-- FAQ feedback (👍/👎) and usage analytics
-- Rate limiting + helmet security headers
-- Refresh tokens / httpOnly cookie sessions
-- Re-embedding script for zero-downtime model upgrades
-- Hybrid search (vector + full-text) via Atlas `$rankFusion`
