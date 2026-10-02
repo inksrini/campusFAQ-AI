@@ -1,13 +1,100 @@
-# CAMPUS AI — Intelligent College FAQ Assistant 🎓🤖
+# Campus AI – College FAQ Assistant
 
-An AI-powered FAQ assistant for colleges. Students ask questions in natural language
-("Can I use the library at 5 in the evening?"); the system finds the relevant trusted
-FAQs using **semantic search (MongoDB Atlas Vector Search + Gemini embeddings)** and
-generates a concise, grounded answer with **Google Gemini**.
+Campus AI is a college project that helps students get answers to common college-related questions such as admissions, fees, exams, library, hostel, transport, placements and scholarships.
 
-> **The knowledge base is the source of truth.** Gemini never invents college facts —
-> it only writes answers from the FAQs retrieved from MongoDB. If nothing relevant is
-> found, the assistant says so and logs the question for admin review.
+The application uses MongoDB Atlas Vector Search to find relevant FAQs based on meaning, and Google Gemini to generate the final answer from the retrieved information.
+
+## Features
+
+- Ask college-related questions in natural language
+- Semantic search using MongoDB Atlas Vector Search
+- AI-generated answers based on stored FAQs
+- FAQ browsing by category
+- User registration and login
+- Role-based access for users, creators and admins
+- Admin dashboard for managing FAQs and categories
+- AI-assisted FAQ drafting for admins
+- Unanswered question tracking
+
+## Tech Stack
+
+### Frontend
+- HTML
+- CSS
+- Vanilla JavaScript
+
+### Backend
+- Node.js 24
+- Express 5
+- Mongoose
+
+### Database
+- MongoDB Atlas
+- MongoDB Atlas Vector Search
+
+### AI
+- Google Gemini API
+- `@google/genai`
+- Gemini embeddings
+
+### Authentication
+- JWT
+- bcryptjs
+
+### Testing
+- Postman
+
+## How it works
+
+When a student asks a question:
+
+1. The question is converted into an embedding.
+2. MongoDB Atlas Vector Search finds similar FAQs.
+3. Relevant FAQs are passed to Gemini.
+4. Gemini generates an answer using the retrieved FAQ information.
+5. If no useful information is found, the application returns a fallback response instead of making up an answer.
+
+## Project Structure
+
+```text
+campus-ai/
+├── client/
+│   ├── index.html
+│   ├── browse.html
+│   ├── login.html
+│   ├── register.html
+│   ├── admin.html
+│   ├── css/
+│   │   └── styles.css
+│   └── js/
+│       ├── api.js
+│       ├── auth.js
+│       ├── chat.js
+│       ├── faq.js
+│       ├── admin.js
+│       └── login.js
+│
+├── server/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   ├── utils/
+│   ├── validators/
+│   ├── scripts/
+│   ├── app.js
+│   └── server.js
+│
+├── postman/
+│   └── CampusAI.postman_collection.json
+│
+├── .env.example
+├── .gitignore
+├── package.json
+├── package-lock.json
+└── README.md
 
 ---
 
