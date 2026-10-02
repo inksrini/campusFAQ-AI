@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register — Campus AI</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="/index.html">Campus<span>AI</span></a>
+    <nav id="navAuth"></nav>
+  </header>
+
+  <main class="container">
+    <section class="card auth-card">
+      <div class="page-head">
+        <h1>Create your account</h1>
+        <p>Registration is open to students. Staff accounts are created by the college.</p>
+      </div>
+
+      <div class="alert error hidden" id="registerError" role="alert"></div>
+
+      <form id="registerForm" novalidate>
+        <label for="name">Full name</label>
+        <input id="name" type="text" placeholder="Nila Srinivasan" minlength="2" maxlength="60" required />
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="srininila@college.edu" required />
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="At least 8 characters" minlength="8" required />
+        <p class="field-note">Your password is stored securely and is never visible to anyone.</p>
+        <p style="margin-top: 18px">
+          <button class="btn" type="submit" id="registerBtn" style="width: 100%">Register</button>
+        </p>
+      </form>
+
+      <p class="muted" style="text-align: center">
+        Already registered? <a href="/login.html">Login here</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="module" src="/js/login.js"></script>
+</body>
+</html>

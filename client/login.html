@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Campus AI</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="/index.html">Campus<span>AI</span></a>
+    <nav id="navAuth"></nav>
+  </header>
+
+  <main class="container">
+    <section class="card auth-card">
+      <div class="page-head">
+        <h1>Welcome back</h1>
+        <p>Students log in to keep their name with their questions; staff manage the knowledge base.</p>
+      </div>
+
+      <div class="alert error hidden" id="loginError" role="alert"></div>
+
+      <form id="loginForm" novalidate>
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="you@college.edu" required />
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="••••••••" minlength="8" required />
+        <p style="margin-top: 18px">
+          <button class="btn" type="submit" id="loginBtn" style="width: 100%">Login</button>
+        </p>
+      </form>
+
+      <p class="muted" style="text-align: center">
+        No account? <a href="/register.html">Register here</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="module" src="/js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "name": "campus-ai",
+  "version": "1.0.0",
+  "description": "CAMPUS AI - Intelligent College FAQ Assistant (Node.js + Express + MongoDB Atlas Vector Search + Google Gemini)",
+  "main": "server/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js",
+    "seed": "node server/scripts/seed.js",
+    "test": "node server/scripts/smokeTest.js",
+    "test:roles": "node server/scripts/roleTest.js"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "keywords": ["express", "mongodb", "atlas-vector-search", "gemini", "rag", "semantic-search", "college-project"],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.10.3",
+    "@google/genai": "^2.24.0",
+    "jsonwebtoken": "^9.0.3",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.4",
+    "cors": "^2.8.6"
+  }
+}

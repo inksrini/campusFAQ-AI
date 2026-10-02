@@ -1,0 +1,540 @@
+{
+  "info": {
+    "_postman_id": "c1a2e5b7-4d8f-4b3a-9c2d-campusai0001",
+    "name": "Campus AI — College FAQ Assistant",
+    "description": "Complete API test suite for Campus AI.\n\nHOW TO USE\n1. Start the server (npm start) and run the seed (npm run seed).\n2. Run \"Auth → Login (admin)\" — it stores the admin token automatically.\n3. Run \"Auth → Login (creator)\" — stores the creator token.\n4. Run \"Auth → Login (student)\" — stores the student token.\n5. Folder \"Admin (token: admin)\" = admin token; \"Creator (token: creator)\" = creator token; \"Protected (token: student)\" = student token; public requests need no token.\n\nROLE MODEL: public (no token) / user / creator / admin. FAQ writes need creator or admin; PATCH/DELETE are ownership-checked (creator: own FAQ only; admin: any).\n\nVariables are set on the collection: baseUrl, adminToken, creatorToken, studentToken, faqId, categoryId, unansweredId, creatorFaqId.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "adminToken", "value": "" },
+    { "key": "creatorToken", "value": "" },
+    { "key": "studentToken", "value": "" },
+    { "key": "faqId", "value": "" },
+    { "key": "categoryId", "value": "" },
+    { "key": "unansweredId", "value": "" },
+    { "key": "creatorFaqId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /api/health",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /api/auth/register (valid)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Student\",\n  \"email\": \"test.student@campus.ai\",\n  \"password\": \"Test@12345\"\n}" },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "POST /api/auth/register (short password → 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"X\",\n  \"email\": \"bad-email\",\n  \"password\": \"123\"\n}" },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "POST /api/auth/register (duplicate email → 409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Student Again\",\n  \"email\": \"test.student@campus.ai\",\n  \"password\": \"Test@12345\"\n}" },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "POST /api/auth/login (admin) → stores adminToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success) pm.collectionVariables.set('adminToken', json.data.token);",
+                  "pm.test('status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@campus.ai\",\n  \"password\": \"Admin@12345\"\n}" },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "POST /api/auth/login (creator) → stores creatorToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success) pm.collectionVariables.set('creatorToken', json.data.token);",
+                  "pm.test('status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"creator@campus.ai\",\n  \"password\": \"Creator@12345\"\n}" },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "POST /api/auth/login (student) → stores studentToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success) pm.collectionVariables.set('studentToken', json.data.token);",
+                  "pm.test('status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"student@campus.ai\",\n  \"password\": \"Student@12345\"\n}" },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "POST /api/auth/login (wrong password → 401)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@campus.ai\",\n  \"password\": \"WrongPassword1\"\n}" },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "GET /api/auth/me (admin token)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories (public reads)",
+      "item": [
+        {
+          "name": "GET /api/categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success && json.data.items.length > 0) pm.collectionVariables.set('categoryId', json.data.items[0].id);",
+                  "pm.test('status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/categories"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories (token: admin)",
+      "item": [
+        {
+          "name": "POST /api/categories (valid → 201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Sports\",\n  \"description\": \"Teams, grounds and fixtures\"\n}" },
+            "url": "{{baseUrl}}/api/categories"
+          }
+        },
+        {
+          "name": "POST /api/categories (duplicate → 409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Sports\"\n}" },
+            "url": "{{baseUrl}}/api/categories"
+          }
+        },
+        {
+          "name": "PATCH /api/categories/:id",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated description\"\n}" },
+            "url": "{{baseUrl}}/api/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "DELETE /api/categories/:id (has FAQs → 409)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{baseUrl}}/api/categories/{{categoryId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Protected (token: student → 403)",
+      "item": [
+        {
+          "name": "POST /api/categories (student → 403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"NotAllowed\"\n}" },
+            "url": "{{baseUrl}}/api/categories"
+          }
+        },
+        {
+          "name": "GET /api/admin/stats (student → 403)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+            "url": "{{baseUrl}}/api/admin/stats"
+          }
+        },
+        {
+          "name": "POST /api/faqs (no token → 401)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"Anonymous FAQ?\",\n  \"answer\": \"This should be rejected with 401.\",\n  \"category\": \"000000000000000000000000\"\n}" },
+            "url": "{{baseUrl}}/api/faqs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "FAQs (public reads)",
+      "item": [
+        {
+          "name": "GET /api/faqs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/faqs?limit=5"
+          }
+        },
+        {
+          "name": "GET /api/faqs?category=",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/faqs?category={{categoryId}}&limit=5"
+          }
+        },
+        {
+          "name": "GET /api/faqs/:id (invalid id → 400)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/faqs/not-a-valid-id"
+          }
+        }
+      ]
+    },
+    {
+      "name": "FAQs (token: admin)",
+      "item": [
+        {
+          "name": "POST /api/faqs (valid → 201, stores faqId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success) pm.collectionVariables.set('faqId', json.data.faq.id);",
+                  "pm.test('status 201', () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"What is the dress code on campus?\",\n  \"answer\": \"Students are expected to wear modest, college-appropriate clothing. Lab coats are required inside science and computer laboratories.\",\n  \"category\": \"{{categoryId}}\"\n}" },
+            "url": "{{baseUrl}}/api/faqs"
+          }
+        },
+        {
+          "name": "POST /api/faqs (invalid category → 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"FAQ with bad category\",\n  \"answer\": \"The category id here does not exist in the database.\",\n  \"category\": \"000000000000000000000000\"\n}" },
+            "url": "{{baseUrl}}/api/faqs"
+          }
+        },
+        {
+          "name": "PATCH /api/faqs/:id (re-embeds)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"answer\": \"Students should dress modestly. Lab coats are mandatory inside all laboratories, and ID cards must be visible at all times.\"\n}" },
+            "url": "{{baseUrl}}/api/faqs/{{faqId}}"
+          }
+        },
+        {
+          "name": "GET /api/faqs/:id (verify update)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/faqs/{{faqId}}"
+          }
+        },
+        {
+          "name": "DELETE /api/faqs/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{baseUrl}}/api/faqs/{{faqId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Creator (token: creator)",
+      "item": [
+        {
+          "name": "POST /api/faqs (creator → 201, stores creatorFaqId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success) pm.collectionVariables.set('creatorFaqId', json.data.faq.id);",
+                  "pm.test('status 201', () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{creatorToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"What time does the sports ground open?\",\n  \"answer\": \"The sports ground is open from 6 AM to 8 PM on working days for registered students.\",\n  \"category\": \"{{categoryId}}\"\n}" },
+            "url": "{{baseUrl}}/api/faqs"
+          }
+        },
+        {
+          "name": "PATCH /api/faqs/:id (own FAQ → 200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{creatorToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"answer\": \"The sports ground is open 6 AM to 8 PM on working days; entry with a valid student ID only.\"\n}" },
+            "url": "{{baseUrl}}/api/faqs/{{creatorFaqId}}"
+          }
+        },
+        {
+          "name": "PATCH /api/faqs/:id (someone else's FAQ → 403)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{creatorToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"answer\": \"Hijack attempt — should be forbidden.\"\n}" },
+            "url": "{{baseUrl}}/api/faqs/{{faqId}}"
+          }
+        },
+        {
+          "name": "POST /api/ai/generate-faq (creator → 200)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{creatorToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"categoryName\": \"Library\",\n  \"topic\": \"Digital library rules\",\n  \"notes\": \"E-books are available via the library portal. Laptops are issued for 3 days. Printing costs 2 rupees per page.\",\n  \"count\": 2\n}" },
+            "url": "{{baseUrl}}/api/ai/generate-faq"
+          }
+        },
+        {
+          "name": "GET /api/users (creator → 403)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{creatorToken}}" }],
+            "url": "{{baseUrl}}/api/users"
+          }
+        },
+        {
+          "name": "GET /api/admin/stats (creator → 403)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{creatorToken}}" }],
+            "url": "{{baseUrl}}/api/admin/stats"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search & Chat (public)",
+      "item": [
+        {
+          "name": "POST /api/search (paraphrase → should match)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"can I use the library at 5 in the evening\"\n}" },
+            "url": "{{baseUrl}}/api/search"
+          }
+        },
+        {
+          "name": "POST /api/search (unrelated → empty matches)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"what is the boiling point of mercury\"\n}" },
+            "url": "{{baseUrl}}/api/search"
+          }
+        },
+        {
+          "name": "POST /api/chat (related → grounded answer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"How many books am I allowed to borrow?\"\n}" },
+            "url": "{{baseUrl}}/api/chat"
+          }
+        },
+        {
+          "name": "POST /api/chat (unrelated → fallback)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"tell me a joke about penguins\"\n}" },
+            "url": "{{baseUrl}}/api/chat"
+          }
+        },
+        {
+          "name": "POST /api/search (too short → 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"hi\"\n}" },
+            "url": "{{baseUrl}}/api/search"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin (token: admin)",
+      "item": [
+        {
+          "name": "POST /api/admin/generate-faq-drafts",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"categoryName\": \"Library\",\n  \"topic\": \"New digital library rules\",\n  \"notes\": \"E-books can be accessed via the library portal. Laptops may be issued for 3 days. Printing costs 2 rupees per page.\",\n  \"count\": 3\n}" },
+            "url": "{{baseUrl}}/api/admin/generate-faq-drafts"
+          }
+        },
+        {
+          "name": "GET /api/admin/unanswered (open)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success && json.data.items.length > 0) pm.collectionVariables.set('unansweredId', json.data.items[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{baseUrl}}/api/admin/unanswered?status=open"
+          }
+        },
+        {
+          "name": "PATCH /api/admin/unanswered/:id (dismiss)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"dismissed\"\n}" },
+            "url": "{{baseUrl}}/api/admin/unanswered/{{unansweredId}}"
+          }
+        },
+        {
+          "name": "GET /api/admin/stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{baseUrl}}/api/admin/stats"
+          }
+        },
+        {
+          "name": "GET /api/users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{baseUrl}}/api/users"
+          }
+        }
+      ]
+    }
+  ]
+}

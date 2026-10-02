@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse FAQs — Campus AI</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="/index.html">Campus<span>AI</span></a>
+    <nav id="navAuth"></nav>
+  </header>
+
+  <main class="container">
+    <div class="page-head">
+      <h1>Browse the knowledge base</h1>
+      <p>Every answer NILA can give lives here — reviewed and published by the college.</p>
+    </div>
+
+    <div id="categoryBar" class="chip-row"></div>
+
+    <p class="muted" id="browseStatus">Loading…</p>
+    <section id="faqList" aria-live="polite"></section>
+  </main>
+
+  <footer class="site">Campus AI — Intelligent College FAQ Assistant</footer>
+  <script type="module" src="/js/faq.js"></script>
+</body>
+</html>
