@@ -9,7 +9,7 @@ generates a concise, grounded answer with **Google Gemini**.
 
 **NILA** is the AI assistant behind CAMPUS AI.
 
-She helps students find answers about college life, academics, facilities, policies, and more — using information from the college's verified knowledge base.
+She helps students find answers about college life, academics, facilities, policies, and more  using information from the college's verified knowledge base.
 
 > "Ask me anything about college. I'll try to save you from asking five people and getting six different answers."
 
