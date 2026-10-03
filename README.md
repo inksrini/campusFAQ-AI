@@ -17,14 +17,13 @@ She helps students find answers about college life, academics, facilities, polic
 
 NILA means **"moon" (நிலா)** in Tamil.
 
-But there's another reason behind the name. Some names are chosen. Some names have a story.
-This one does....🌙
+But there's another reason behind the name. I never had the courage to say much back then, so i decided to give the name a second life here.
 
 > **The knowledge base is the source of truth.** Gemini never invents college facts —
 > it only writes answers from the FAQs retrieved from MongoDB. If nothing relevant is
 > found, the assistant says so and logs the question for admin review.
 
-
+**Created and maintained by [Srinivasan](https://github.com/inksrini)**
 
 ## Table of contents
 1. [Problem statement & objectives](#1-problem-statement--objectives)
